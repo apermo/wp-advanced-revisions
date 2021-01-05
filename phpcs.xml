@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<ruleset name="">
+	<desription>Cyanext Coding</desription>
+
+	<rule ref="PHPCompatibilityWP"/>
+
+	<rule ref="WordPress-Core">
+		<exclude name="WordPress.PHP.YodaConditions"/>
+	</rule>
+
+	<arg name="parallel" value="8"/>
+	<arg name="extensions" value="php"/>
+
+	<file>./src</file>
+	<exclude-pattern>/vendor/*</exclude-pattern>
+	<exclude-pattern>/node_modules/*</exclude-pattern>
+</ruleset>

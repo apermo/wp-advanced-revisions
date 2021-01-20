@@ -79,7 +79,7 @@ class Options_Page {
 		/**
 		 * Filters the the post types that shall not be be editable on the options page.
 		 *
-		 * @param string[] $post_types Array Post type IDs that will not be visible on the options page.
+		 * @param string[] $no_revisions_for Array Post type IDs that will not be visible on the options page.
 		 *
 		 * @since 0.1.0
 		 */
@@ -136,7 +136,7 @@ class Options_Page {
 		}
 		?>
 		<style>
-			label.wpar_label {
+			label.wp_advanced_revisions_label {
 				display: block;
 			}
 		</style>
@@ -223,7 +223,7 @@ class Options_Page {
 
 		foreach ( $options as $value => $label ) {
 			?>
-			<label class="wpar_label"><input type="radio" name="wp_advanced_revisions[<?php echo esc_attr( $args['key'] ); ?>'][status]" class="status_field" value="<?php echo esc_attr( $value ); ?>" <?php checked( $args['status'], $value ); ?>> <?php echo esc_html( $label ); ?></label>
+			<label class="wp_advanced_revisions_label"><input type="radio" name="wp_advanced_revisions[<?php echo esc_attr( $args['key'] ); ?>][status]" class="status_field" value="<?php echo esc_attr( $value ); ?>" <?php checked( $args['status'], $value ); ?>> <?php echo esc_html( $label ); ?></label>
 			<?php
 		}
 		?>

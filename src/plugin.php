@@ -2,23 +2,29 @@
 /**
  * Plugin Name:       WP Advanced Revisions
  * Description:       Allow to maintain the revisions for each post type via WordPress options page
- * Version:           0.1.0
+ * Version:           0.2.0
  * Requires at least: 5.2
  * Requires PHP:      7.2
  * Author:            Christoph Daum & Joshua Schmidtke
  * Author URI:        TBD
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
+ *
+ * @package todo
  */
 
+namespace Apermo\WP_Advanced_Revisions;
+
 if ( ! defined( 'ABSPATH' ) ) {
-	header( 'HTTP/1.0 404 Not Found' );
-	exit( 'You shall not pass' );
+	/**
+	 * Not in WordPress, bail out.
+	 */
+	header( 'Status: 404 Not found' );
+	header( 'HTTP/1.1 404 Not found' );
+	exit();
 }
 
-
-class WP_Advanced_Revisions {
-
+class Main {
 	/**
 	 * Plugin Options
 	 *
@@ -35,14 +41,14 @@ class WP_Advanced_Revisions {
 	public static function init(): void {
 		self::$options = get_option( 'wp_advanced_revisions' );
 
-		add_action( 'init', [ __CLASS__, 'init_revisions' ], 99 );
+		add_action( 'init', [ __CLASS__, 'init_revisions' ], 999 );
 
 		if ( is_admin() ) {
 			define( 'WP_POST_REVISIONS_DEFINED', defined( 'WP_POST_REVISIONS' ) );
 			require_once 'inc/class.options-pages.php';
 
-			add_action( 'admin_menu', [ 'WP_Advanced_Revisions_Options_Page', 'add_admin_menu' ] );
-			add_action( 'admin_init', [ 'WP_Advanced_Revisions_Options_Page', 'init_settings' ] );
+			add_action( 'admin_menu', [ 'Apermo\WP_Advanced_Revisions\Options_Page', 'add_admin_menu' ] );
+			add_action( 'admin_init', [ 'Apermo\WP_Advanced_Revisions\Options_Page', 'init_settings' ] );
 		}
 
 		add_filter( 'wp_revisions_to_keep', [ __CLASS__, 'revisions_to_keep_per_post_type' ], 10, 2 );
@@ -52,9 +58,8 @@ class WP_Advanced_Revisions {
 		}
 	}
 
-
 	/**
-	 * Called on 'init' with priority 99, hopefully late enough to be able to overwrite any settings for revisions
+	 * Called on 'init' with priority 999, hopefully late enough to be able to overwrite any settings for revisions
 	 *
 	 * @since 0.1.0
 	 */
@@ -84,14 +89,14 @@ class WP_Advanced_Revisions {
 	/**
 	 * Called by filter 'wp_revisions_to_keep' to limit the revisions.
 	 *
-	 * @param int     $num  Number of revisions to keep.
-	 * @param WP_Post $post The WordPress post object.
+	 * @param int      $num  Number of revisions to keep.
+	 * @param \WP_Post $post The WordPress post object.
 	 *
 	 * @return int
 	 *
 	 * @since 0.1.0
 	 */
-	public static function revisions_to_keep_per_post_type( int $num, WP_Post $post ): int {
+	public static function revisions_to_keep_per_post_type( int $num, \WP_Post $post ): int {
 		if ( ! post_type_supports( $post->post_type, 'revisions' ) ) {
 			return $num;
 		}
@@ -101,4 +106,4 @@ class WP_Advanced_Revisions {
 	}
 }
 
-add_action( 'plugins_loaded', [ 'WP_Advanced_Revisions', 'init' ] );
+add_action( 'plugins_loaded', [ 'Apermo\WP_Advanced_Revisions\Main', 'init' ] );

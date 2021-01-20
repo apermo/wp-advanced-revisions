@@ -1,11 +1,22 @@
 <?php
 
+namespace Apermo\WP_Advanced_Revisions;
+
 if ( ! defined( 'ABSPATH' ) ) {
-	header( 'HTTP/1.0 404 Not Found' );
-	exit( 'You shall not pass' );
+	/**
+	 * Not in WordPress, bail out.
+	 */
+	header( 'Status: 404 Not found' );
+	header( 'HTTP/1.1 404 Not found' );
+	exit();
 }
 
-class WP_Advanced_Revisions_Options_Page {
+/**
+ * Class Options_Page
+ *
+ * @package Apermo\WP_Advanced_Revisions
+ */
+class Options_Page {
 	/**
 	 * Init the Admin menu entry.
 	 *
@@ -65,7 +76,6 @@ class WP_Advanced_Revisions_Options_Page {
 			'wp_advanced_revisions'
 		);
 
-
 		/**
 		 * Filters the the post types that shall not be be editable on the options page.
 		 *
@@ -86,20 +96,20 @@ class WP_Advanced_Revisions_Options_Page {
 		);
 
 		foreach ( $post_types as $post_type ) {
-			// If the current post type is blocked for revisions, skip and go on
+			// If the current post type is blocked for revisions, skip and go on.
 			if ( in_array( $post_type, $no_revisions_for, true ) ) {
 				continue;
 			}
 
 			$post_type_object = get_post_type_object( $post_type );
 
-			if ( ! $post_type_object instanceof WP_Post_Type ) {
+			if ( ! $post_type_object instanceof \WP_Post_Type ) {
 				continue;
 			}
 
 			$args = [
 				'key'    => $post_type,
- 				'value'  => $options[ $post_type ]['count'] ?? '',
+				'value'  => $options[ $post_type ]['count'] ?? '',
 				'status' => $options[ $post_type ]['status'] ?? '',
 			];
 
@@ -124,17 +134,23 @@ class WP_Advanced_Revisions_Options_Page {
 		if ( ! current_user_can( 'manage_options' ) ) {
 			wp_die( esc_html__( 'You do not have sufficient permissions to access this page.', 'wp-advanced-revisions' ) );
 		}
-
-		echo '<div class="wrap">' . "\n";
-		echo '	<h1>' . get_admin_page_title() . '</h1>' . "\n";
-		echo '	<form action="options.php" method="post">' . "\n";
-
-		settings_fields( 'wp_advanced_revisions_group' );
-		do_settings_sections( 'wp_advanced_revisions' );
-		submit_button();
-
-		echo '	</form>' . "\n";
-		echo '</div>' . "\n";
+		?>
+		<style>
+			label.wpar_label {
+				display: block;
+			}
+		</style>
+		<div class="wrap">
+			<h1><?php echo esc_html( get_admin_page_title() ); ?></h1>
+			<form action="options.php" method="post">
+			<?php
+			settings_fields( 'wp_advanced_revisions_group' );
+			do_settings_sections( 'wp_advanced_revisions' );
+			submit_button();
+			?>
+			</form>
+		</div>
+		<?php
 	}
 
 	/**
@@ -146,27 +162,37 @@ class WP_Advanced_Revisions_Options_Page {
 	 */
 	public static function render_global_field( $args ): void {
 		if ( WP_POST_REVISIONS_DEFINED ) {
+			?>
+			<p class="description">
+			<?php
+			esc_html_e( '"WP_POST_REVISIONS" is defined.', 'wp-advanced-revisions' );
+			?>
+			<br>
+			<?php
 			if ( WP_POST_REVISIONS === true || WP_POST_REVISIONS === -1 ) {
-				$revisions = __( 'Enabled', 'wp-advanced-revisions' );
+				esc_html_e( 'Enabled', 'wp-advanced-revisions' );
 			} elseif ( WP_POST_REVISIONS === 0 ) {
-				$revisions = __( 'Disabled', 'wp-advanced-revisions' );
+				esc_html_e( 'Disabled', 'wp-advanced-revisions' );
 			} else {
-				$revisions = (int) WP_POST_REVISIONS;
+				$num_revisions = (int) WP_POST_REVISIONS;
 
-				$revisions = sprintf(
-					/* translators: %d is the number of revisions. */
-					_n( '%d revision allowed', '%d revisions allowed', $revisions, 'wp-advanced-revisions' ),
-					$revisions
+				echo esc_html(
+					sprintf(
+						/* translators: %d is the number of revisions. */
+						_n( '%d revision allowed', '%d revisions allowed', $num_revisions, 'wp-advanced-revisions' ),
+						$num_revisions
+					)
 				);
 			}
-
-			echo '<p class="description">' . __( '"WP_POST_REVISIONS" is defined.', 'wp-advanced-revisions' ) . '<br>' . $revisions . '</p>';
+			?>
+			</p>
+			<?php
 			return;
 		}
-
-
-		echo '<input type="number" name="wp_advanced_revisions[global]" class="regular-text global_revisions" value="' . esc_attr( $args['value'] ) . '">';
-		echo '<p class="description">' . __( 'Global number of revisions. Will set "WP_POST_REVISIONS", -1 or empty for infinite, 0 for disable, any integer for any other number', 'wp-advanced-revisions' ) . '</p>';
+		?>
+		<input type="number" name="wp_advanced_revisions[global]" class="regular-text global_revisions" value="<?php echo esc_attr( $args['value'] ) ?>">
+		<p class="description"><?php esc_html_e( 'Global number of revisions. Will set "WP_POST_REVISIONS", -1 or empty for infinite, 0 for disable, any integer for any other number', 'wp-advanced-revisions' ); ?></p>
+		<?php
 	}
 
 	/**
@@ -177,10 +203,11 @@ class WP_Advanced_Revisions_Options_Page {
 	 * @since 0.1.0
 	 */
 	public static function render_post_type_field( $args ): void {
-		echo '<input type="number" name="wp_advanced_revisions[' . esc_attr( $args['key'] ) . '][count]" class="regular-text bla_field" value="' . esc_attr( $args['value'] ) . '">';
-		echo '<p class="description">' . __( 'Number of revisions, -1 for infinite, 0 for disable, leave empty for default', 'wp-advanced-revisions' ) . '</p>';
-
-		$status = post_type_supports( $args['key'], 'revisions' ) ? __( 'Enabled', 'wp-advanced-revisions' ) : __( 'Disabled', 'wp-advanced-revisions' );
+		?>
+		<input type="number" name="wp_advanced_revisions[<?php echo esc_attr( $args['key'] ); ?>][count]" class="regular-text bla_field" value="<?php echo esc_attr( $args['value'] ); ?>">
+		<p class="description"><?php esc_html_e( 'Number of revisions, -1 for infinite, 0 for disable, leave empty for default', 'wp-advanced-revisions' ); ?></p>
+		<?php
+		$status = post_type_supports( $args['key'], 'revisions' ) ? esc_html__( 'Enabled', 'wp-advanced-revisions' ) : esc_html__( 'Disabled', 'wp-advanced-revisions' );
 
 		$options = [
 			'on'  => __( 'Enabled', 'wp-advanced-revisions' ),
@@ -195,10 +222,13 @@ class WP_Advanced_Revisions_Options_Page {
 		}
 
 		foreach ( $options as $value => $label ) {
-			echo '<input type="radio" name="wp_advanced_revisions[' . esc_attr( $args['key'] ) . '][status]" class="status_field" value="' . esc_attr( $value ) . '" ' . checked( $args['status'], $value, false ) . '> ' . $label . '<br>';
+			?>
+			<label class="wpar_label"><input type="radio" name="wp_advanced_revisions[<?php echo esc_attr( $args['key'] ); ?>'][status]" class="status_field" value="<?php echo esc_attr( $value ); ?>" <?php checked( $args['status'], $value ); ?>> <?php echo esc_html( $label ); ?></label>
+			<?php
 		}
-
-		echo '<p class="description">' . __( 'Overwrite the default setting for revisions of this post type', 'wp-advanced-revisions' ) . '</p>';
+		?>
+		<p class="description"><?php esc_html_e( 'Overwrite the default setting for revisions of this post type', 'wp-advanced-revisions' ); ?></p>
+		<?php
 	}
 
 	/**

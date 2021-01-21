@@ -1,8 +1,12 @@
 {
-  "name": "cyan-boilerplate",
-  "version": "1.0.0",
+  "name": "wp-advanced-revisions",
+  "version": "0.2.0",
   "description": "",
   "license": "GPL-2.0-or-later",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apermo/wp-advanced-revisions"
+  },
   "devDependencies": {
     "grunt": "^1.3.0",
     "grunt-contrib-compress": "^1.6.0",

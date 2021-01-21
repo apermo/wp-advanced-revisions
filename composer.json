@@ -1,11 +1,16 @@
 {
-  "name": "cyanext/plugin-name",
+  "name": "apermo/wp-advanced-revisions",
   "description": "",
   "keywords": [
-    "wordpress"
+    "wordpress",
+    "revisions"
   ],
   "license": "GPL-2.0-or-later",
   "type": "wordpress-plugin",
+  "support": {
+    "issues": "https://github.com/apermo/wp-advanced-revisions/issues",
+    "source": "https://github.com/apermo/wp-advanced-revisions"
+  },
   "require": {
     "php": "^7.3",
     "composer/installers": "~1.0"

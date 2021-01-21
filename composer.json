@@ -28,7 +28,6 @@
     "test": "@php ./vendor/phpunit/phpunit/phpunit"
   },
   "config": {
-    "sort-packages": true,
-    "vendor-dir": "src/vendor"
+    "sort-packages": true
   }
 }

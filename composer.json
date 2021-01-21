@@ -12,15 +12,22 @@
     "source": "https://github.com/apermo/wp-advanced-revisions"
   },
   "require": {
-    "php": "^7.3",
-    "composer/installers": "~1.0"
+    "php": "^7.2",
+    "composer/installers": "^1.9.0"
   },
   "require-dev": {
     "dealerdirect/phpcodesniffer-composer-installer": "^0.7.0",
+    "humanmade/coding-standards": "^1.0",
     "phpcompatibility/phpcompatibility-wp": "^2.1",
     "phpunit/phpunit": "^9.4",
-    "squizlabs/php_codesniffer": "^3.5",
-    "wp-coding-standards/wpcs": "^2.3"
+    "squizlabs/php_codesniffer": "^3.5"
+  },
+  "minimum-stability": "dev",
+  "prefer-stable": true,
+  "autoload": {
+    "classmap": [
+      "src/"
+    ]
   },
   "scripts": {
     "format": "@php ./vendor/squizlabs/php_codesniffer/bin/phpcbf --report=summary,source",

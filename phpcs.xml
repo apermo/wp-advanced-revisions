@@ -1,17 +1,18 @@
 <?xml version="1.0"?>
-<ruleset name="">
-	<desription>Cyanext Coding</desription>
-
-	<rule ref="PHPCompatibilityWP"/>
-
-	<rule ref="WordPress-Core">
-		<exclude name="WordPress.PHP.YodaConditions"/>
-	</rule>
-
+<ruleset>
 	<arg name="parallel" value="8"/>
 	<arg name="extensions" value="php"/>
 
+	<!-- Path to strip from the front of file paths inside reports (displays shorter paths) -->
+	<arg name="basepath" value="."/>
+
+	<!-- Set a minimum PHP version for PHPCompatibility -->
+	<config name="testVersion" value="7.2-"/>
+
 	<file>./src</file>
+
+	<rule ref="HM"/>
+
 	<exclude-pattern>/vendor/*</exclude-pattern>
 	<exclude-pattern>/node_modules/*</exclude-pattern>
 </ruleset>
